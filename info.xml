@@ -2,7 +2,6 @@
 
 Features implemented : 
 - Medium needle in Vario mode
-- MacCready setting needle (blue arrow needle)
-- Wind direction
+
 
 Repository : https://github.com/nan0/air-manager-instrument_lxnax-s8x</description><compatibleFSX>false</compatibleFSX><compatibleP3D>false</compatibleP3D><compatibleXPL>false</compatibleXPL><compatibleFS2>false</compatibleFS2><compatibleFS2020>true</compatibleFS2020><version>1</version><configVersion>1</configVersion><pluginInterfaceVersion>100</pluginInterfaceVersion><prefWidth>512</prefWidth><prefHeight>512</prefHeight><source>PERSONAL</source><platforms><platform>ANDROID</platform><platform>WINDOWS</platform></platforms><tiers><tier>HOME_USE_STANDARD</tier></tiers></pluginstrument>
