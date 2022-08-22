@@ -9,16 +9,16 @@ DEFAULT_LABEL_SIZE = 28
 img_add_fullscreen("ls100_bg.png")
 img_vario_unit = txt_add("m/s", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR_INVERTED .. ";  size:23; valign:center; halign: right;", 310, 440, 30, 23)
 
--- Altitude
-txt_add("Altitude", " font:" .. DEFAULT_FONT .. "; color:" .. COLOR_SECONDARY .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 150, 155, DEFAULT_LABEL_SIZE)
-txt_add("ft", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 205, 155, DEFAULT_LABEL_SIZE)
-textbox_altitude = txt_add("0", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR .. ";  size:80; valign:center; halign: right;", 160, 165, 155, 80)
-
 -- Vario
-txt_add("Variometer", " font:" .. DEFAULT_FONT .. "; color:" .. COLOR_SECONDARY .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 265, 150, DEFAULT_LABEL_SIZE)
-txt_add("m/s", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 320, 155, DEFAULT_LABEL_SIZE)
-textbox_vario = txt_add("0", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR .. ";  size:80; valign:center; halign: right;", 135, 280, 155, 80)
+txt_add("Variometer", " font:" .. DEFAULT_FONT .. "; color:" .. COLOR_SECONDARY .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 150, 150, DEFAULT_LABEL_SIZE)
+txt_add("m/s", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 205, 155, DEFAULT_LABEL_SIZE)
+textbox_vario = txt_add("0", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR .. ";  size:80; valign:center; halign: right;", 135, 165, 155, 80)
 img_vario_needle = img_add("ls100_vario_needle.png", 0, 0, 512, 512) -- TODO: fetch canvas size from settings
+
+-- Altitude
+txt_add("Altitude", " font:" .. DEFAULT_FONT .. "; color:" .. COLOR_SECONDARY .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 265, 155, DEFAULT_LABEL_SIZE)
+txt_add("ft", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 320, 155, DEFAULT_LABEL_SIZE)
+textbox_altitude = txt_add("0", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR .. ";  size:80; valign:center; halign: right;", 160, 280, 155, 80)
 
 -- Wind
 img_wind_arrow = img_add("ls100_wind_arrow.png", 130, 225, 35, 35)
