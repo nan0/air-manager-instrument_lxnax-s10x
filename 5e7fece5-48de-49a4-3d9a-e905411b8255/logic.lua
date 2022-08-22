@@ -41,22 +41,23 @@ textbox_wind_velocity = txt_add("0", "font:" .. G.FONT .. "; color:" .. G.COLOR_
 -- Functions --
 
 -- Displays the wind direction in a arrow icon and in a textbox
+-- @param velocity : the wind velocity in knots to be displayed in m/s to be displayed
 -- @param direction : the wind direction in degrees
-function display_wind_direction(direction)
+function display_wind(wind_direction, wind_velocity, plane_direction)
+
+    plane_direction = var_round(180 / math.pi * plane_direction, 0)
+    local direction =  wind_direction - plane_direction
     -- Rotating wind direction arrow
     rotate(img_wind_arrow, direction)
 
     -- Adding wind direction angle as text
-    direction = var_cap(direction, 0, 359)
-    direction = string.format("%f°", direction)
+    direction = string.format("%.0f°", wind_direction)
     txt_set(textbox_wind_dir, direction)
-end
 
--- Displays the wind velocity in a textbox
--- @param velocity : the wind velocity in m/s to be displayed
-function display_wind_velocity(velocity)
-    velocity = var_format(velocity, 0)
-    txt_set(textbox_wind_velocity, velocity)
+    -- Adding wind velocity
+    wind_velocity = wind_velocity / 1.94 -- Converting knots to m/s
+    wind_velocity = var_format(wind_velocity, 0)
+    txt_set(textbox_wind_velocity, wind_velocity)
 end
 
 -- Displays the ground altitude in a textbox
@@ -106,10 +107,8 @@ function dislay_vario(vn)
 end
 
 -- Subscriptions
-fs2020_variable_subscribe("AMBIENT WIND DIRECTION", "Degrees", display_wind_direction)
+fs2020_variable_subscribe("AMBIENT WIND DIRECTION","Degrees", "AMBIENT WIND VELOCITY", "Knots", "HEADING INDICATOR", "Radians", display_wind)
 
-fs2020_variable_subscribe("AMBIENT WIND VELOCITY", "Knots", display_wind_velocity)
-
-fs2020_variable_subscribe("GROUND ALTITUDE", "Meters", display_ground_altitude)
+fs2020_variable_subscribe("INDICATED ALTITUDE", "Meters", display_ground_altitude)
 
 fs2020_variable_subscribe("L:VARIO_NEEDLE", "FLOAT", dislay_vario)

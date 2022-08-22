@@ -2,7 +2,7 @@
 
 Features implemented : 
 - Vario speed in a  +/-5 m/s range. Needle in medium size
-- Avg wind direction and speed in knots
+- Avg wind direction and speed in m/s
 - Avg vario on a period of 5s
 - Altitude in meters
 
