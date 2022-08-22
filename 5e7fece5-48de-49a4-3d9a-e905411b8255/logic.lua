@@ -11,6 +11,7 @@ G = {
 S = {
     AVG_VARIO_PERIOD = 20,
     VARIO_UNIT = "m/s",
+    ALTITUDE_UNIT = "m",
 }
 
 -- Background
@@ -28,7 +29,7 @@ last_vario_values = {}
 
 -- Altitude
 txt_add("Altitude", " font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 265, 155, G.LABEL_SIZE)
-txt_add("ft", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 320, 155, G.LABEL_SIZE)
+txt_add(S.ALTITUDE_UNIT, " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 320, 155, G.LABEL_SIZE)
 textbox_altitude = txt_add("0", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:80; valign:center; halign: right;", 160, 280, 155, 80)
 
 -- Wind
@@ -47,24 +48,23 @@ function display_wind_direction(direction)
 
     -- Adding wind direction angle as text
     direction = var_cap(direction, 0, 359)
-    direction = string.format("%d°", direction)
+    direction = string.format("%f°", direction)
     txt_set(textbox_wind_dir, direction)
 end
 
 -- Displays the wind velocity in a textbox
 -- @param velocity : the wind velocity in m/s to be displayed
 function display_wind_velocity(velocity)
-    velocity = string.format("%d", velocity)
+    velocity = var_format(velocity, 0)
     txt_set(textbox_wind_velocity, velocity)
 end
 
--- Displays the ground altitutude in a textbox
--- @param altitude : the altitude in meters to be displayed in ft
+-- Displays the ground altitude in a textbox
+-- @param altitude : the altitude in meters to be displayed as is
 function display_ground_altitude(altitude)
-    local ft_altitude = altitude * 328084 / 100000
-    ft_altitude = var_cap(ft_altitude, 0, 9999)
-    ft_altitude = var_format(ft_altitude, 0)
-    txt_set(textbox_altitude, ft_altitude)
+    altitude = var_cap(altitude, 0, 9999)
+    altitude = var_format(altitude, 0)
+    txt_set(textbox_altitude, altitude)
 end
 
 -- Computes the vario average for the period set in "avg_vario_period"
