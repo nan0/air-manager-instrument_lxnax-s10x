@@ -1,4 +1,4 @@
-/.idea/5e7fece5-48de-49a4-3d9a-e905411b8255.iml
-/.idea/modules.xml
-/.idea/vcs.xml
-/.idea/workspace.xml
+/.idea
+!/5e7fece5-48de-49a4-3d9a-e905411b8255
+!/UI_projects
+
