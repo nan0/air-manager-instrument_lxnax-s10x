@@ -68,11 +68,11 @@ function display_ground_altitude(altitude)
 end
 
 -- Computes the vario average for the period set in "avg_vario_period"
--- @param v : the latest vario value
-function compute_avg_vario(v)
+-- @param vn : the latest vario value
+function compute_avg_vario(vn)
     local sum = 0
     local array_size = 0
-    local tuple = { v, os.time() }
+    local tuple = { vn, os.time() }
     table.insert(last_vario_values, tuple)
     for index, value_tuple in pairs(last_vario_values) do
         local now = os.time()
@@ -89,7 +89,7 @@ function compute_avg_vario(v)
 end
 
 -- Makes the red needle display the vario
--- @param vn : the latest velocity value
+-- @param vn : the latest vario value
 function dislay_vario(vn)
     local avg_vario = 0
     local needle_vn = var_cap(vn, -5.0, 5.0)
