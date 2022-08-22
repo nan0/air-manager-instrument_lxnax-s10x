@@ -10,10 +10,13 @@ img_add_fullscreen("ls100_bg.png")
 img_vario_unit = txt_add("m/s", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR_INVERTED .. ";  size:23; valign:center; halign: right;", 310, 440, 30, 23)
 
 -- Vario
-txt_add("Variometer", " font:" .. DEFAULT_FONT .. "; color:" .. COLOR_SECONDARY .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 150, 150, DEFAULT_LABEL_SIZE)
+txt_add("Avg.vario", " font:" .. DEFAULT_FONT .. "; color:" .. COLOR_SECONDARY .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 150, 150, DEFAULT_LABEL_SIZE)
 txt_add("m/s", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 205, 155, DEFAULT_LABEL_SIZE)
-textbox_vario = txt_add("0", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR .. ";  size:80; valign:center; halign: right;", 135, 165, 155, 80)
+textbox_avg_vario = txt_add("0", " font:" .. DEFAULT_FONT .. "; color:" .. DEFAULT_COLOR .. ";  size:80; valign:center; halign: right;", 135, 165, 155, 80)
 img_vario_needle = img_add("ls100_vario_needle.png", 0, 0, 512, 512) -- TODO: fetch canvas size from settings
+avg_vario = 0
+last_vario_values = {}
+avg_vario_period = 20
 
 -- Altitude
 txt_add("Altitude", " font:" .. DEFAULT_FONT .. "; color:" .. COLOR_SECONDARY .. ";  size:" .. DEFAULT_LABEL_SIZE .. "; valign:center; halign: right;", 175, 265, 155, DEFAULT_LABEL_SIZE)
@@ -49,17 +52,43 @@ function display_ground_altitude(altitude)
     txt_set(textbox_altitude, ft_altitude)
 end
 
+function compute_avg_vario(vn)
+    local sum = 0
+    local array_size = 0
+    local tuple = { vn, os.time() }
+    table.insert(last_vario_values, tuple)
+    for index, value_tuple in pairs(last_vario_values) do
+        local now = os.time()
+        local value = value_tuple[1]
+        local value_time = value_tuple[2]
+        if value_time < now - avg_vario_period then
+            table.remove(last_vario_values, index)
+        else
+            array_size = array_size + 1
+            sum = sum + value
+        end
+    end
+    print(last_vario_values)
+    print(sum)
+    print(array_size)
+    return sum / array_size
+end
+
 function dislay_vario(vn)
+    print(os.date())
+    local avg_vario = 0
     local needle_vn = var_cap(vn, -5.0, 5.0)
     rotate(img_vario_needle, 240 / 10 * needle_vn)
 
-    vn = var_round(vn, 1)
+    avg_vario = compute_avg_vario(vn)
+    print(avg_vario)
+    avg_vario = var_round(avg_vario, 1)
     local op = ""
-    if vn > 0 then
+    if avg_vario > 0 then
         op = "+"
     end
-    local formated_str = string.format("%s%.1f", op, vn)
-    txt_set(textbox_vario, formated_str)
+    local formated_str = string.format("%s%.1f", op, avg_vario)
+    txt_set(textbox_avg_vario, formated_str)
 end
 
 -- Subscriptions
