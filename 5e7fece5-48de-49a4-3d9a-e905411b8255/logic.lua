@@ -9,8 +9,8 @@ G = {
 
 -- Instrument settings
 S = {
-    AVG_VARIO_PERIOD = 20,
-    AVG_NETTO_PERIOD = 10,
+    AVG_VARIO_TIME = 20,
+    AVG_NETTO_TIME = 10,
     SPEED_UNIT = "m/s",
     ALTITUDE_UNIT = "m",
 }
@@ -112,7 +112,7 @@ function dislay_vario(vario)
     rotate(img_vario_needle, 240 / 10 * caped_vario)
 
     local avg_vario = 0
-    avg_vario = compute_avg_metric(vario, vario_history, S.AVG_VARIO_PERIOD)
+    avg_vario = compute_avg_metric(vario, vario_history, S.AVG_VARIO_TIME)
     local op = ""
     if avg_vario > 0 then
         op = "+"
@@ -125,7 +125,7 @@ end
 -- @param netto : the latest netto value
 function dislay_netto(netto)
     local avg_netto = 0
-    avg_netto = compute_avg_metric(netto, netto_history, S.AVG_NETTO_PERIOD)
+    avg_netto = compute_avg_metric(netto, netto_history, S.AVG_NETTO_TIME)
     avg_netto = var_cap(avg_netto, -5.0, 5.0)
     rotate(img_red_diamond, 240 / 10 * avg_netto)
 end
