@@ -10,7 +10,8 @@ G = {
 -- Instrument settings
 S = {
     AVG_PERIOD = 20,
-    SPEED_UNIT = "m/s"
+    SPEED_UNIT = "m/s",
+    ALTITUDE_UNIT = "m",
 }
 
 -- Instrument UI configuration
@@ -19,30 +20,32 @@ text_speed_unit = txt_add(S.SPEED_UNIT, " font:" .. G.FONT .. "; color:" .. G.CO
 img_red_diamond = img_add("ls100_red_diamond.png", 0, 0, 512, 512)
 img_vario_needle = img_add("ls100_vario_needle.png", 0, 0, 512, 512)
 
-textbox_1_label = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 150, 150, G.LABEL_SIZE)
-textbox_1_value = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:80; valign:center; halign: right;", 135, 165, 155, 80)
-textbox_1_unit = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 205, 155, G.LABEL_SIZE)
-textbox_2_label = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 265, 155, G.LABEL_SIZE)
-textbox_2_value = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:80; valign:center; halign: right;", 135, 280, 155, 80)
-textbox_2_unit = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 320, 155, G.LABEL_SIZE)
+navbox_1_label = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 150, 150, G.LABEL_SIZE)
+navbox_1_value = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:80; valign:center; halign: right;", 135, 165, 155, 80)
+navbox_1_unit = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: left;", 290, 205, 155, G.LABEL_SIZE)
+navbox_2_label = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 265, 155, G.LABEL_SIZE)
+navbox_2_value = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:80; valign:center; halign: right;", 135, 280, 155, 80)
+navbox_2_unit = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: left;", 290, 320, 155, G.LABEL_SIZE)
 
 -- Wind
 img_wind_arrow = img_add("ls100_wind_arrow.png", 130, 225, 35, 35)
-textbox_wind_dir = txt_add("0°", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 100, 265, 55, G.LABEL_SIZE)
+navbox_wind_dir = txt_add("0°", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 100, 265, 55, G.LABEL_SIZE)
 txt_add("/", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.LABEL_SIZE .. "; valign:center; halign: left;", 155, 265, 35, G.LABEL_SIZE)
-textbox_wind_velocity = txt_add("0", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.LABEL_SIZE .. "; valign:center; halign: left;", 165, 265, 35, G.LABEL_SIZE)
+navbox_wind_velocity = txt_add("0", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.LABEL_SIZE .. "; valign:center; halign: left;", 165, 265, 35, G.LABEL_SIZE)
+
+-- Altitude
+txt_set(navbox_2_label, "Altitude")
+txt_set(navbox_2_value, 0)
+txt_set(navbox_2_unit, S.ALTITUDE_UNIT)
 
 -- Vario (Total Energy)
-txt_set(textbox_1_label, "Avg.vario")
-txt_set(textbox_1_value, 0)
-txt_set(textbox_1_unit, S.SPEED_UNIT)
+txt_set(navbox_1_label, "Avg.vario")
+txt_set(navbox_1_value, 0)
+txt_set(navbox_1_unit, S.SPEED_UNIT)
 avg_vario = 0
 vario_history = {}
 
 -- Netto Vario
-txt_set(textbox_2_label, "Netto")
-txt_set(textbox_2_value, 0)
-txt_set(textbox_2_unit, S.SPEED_UNIT)
 avg_netto = 0
 netto_history = {}
 
@@ -60,12 +63,21 @@ function display_wind(wind_direction, wind_velocity, plane_direction)
 
     -- Adding wind direction angle as text
     direction = string.format("%.0f°", wind_direction)
-    txt_set(textbox_wind_dir, direction)
+    txt_set(navbox_wind_dir, direction)
 
     -- Adding wind velocity
     wind_velocity = wind_velocity / 1.94 -- Converting knots to m/s
     wind_velocity = var_format(wind_velocity, 0)
-    txt_set(textbox_wind_velocity, wind_velocity)
+    txt_set(navbox_wind_velocity, wind_velocity)
+end
+
+-- Writes the altitude in the 2nd textbox
+-- @param altitude : the altitude in ft to be displayed in meters
+function display_altitude(altitude)
+    altitude = 3048 / 10000 * altitude
+    altitude = var_cap(altitude, 0, 9999)
+    altitude = var_format(altitude, 0)
+    txt_set(navbox_2_value, altitude)
 end
 
 -- Computes the metric average withing the provided history and for the period set in "S.AVG_PERIOD"
@@ -104,23 +116,16 @@ function dislay_vario(vario)
         op = "+"
     end
     avg_vario = string.format("%s%.1f", op, avg_vario)
-    txt_set(textbox_1_value, avg_vario)
+    txt_set(navbox_1_value, avg_vario)
 end
 
--- Sets the red diamond to the avg. netto and writes the current netto in the 2nd texbox
+-- Sets the red diamond to the avg. netto
 -- @param netto : the latest netto value
 function dislay_netto(netto)
     local avg_netto = 0
     avg_netto = compute_avg_metric(netto, netto_history)
     avg_netto = var_cap(avg_netto, -5.0, 5.0)
     rotate(img_red_diamond, 240 / 10 * avg_netto)
-
-    local op = ""
-    if netto > 0 then
-        op = "+"
-    end
-    netto = string.format("%s%.1f", op, netto)
-    txt_set(textbox_2_value, netto)
 end
 
 -- Subscriptions
@@ -129,3 +134,5 @@ fs2020_variable_subscribe("AMBIENT WIND DIRECTION","Degrees", "AMBIENT WIND VELO
 fs2020_variable_subscribe("L:NETTO", "FLOAT", dislay_netto)
 
 fs2020_variable_subscribe("L:TOTAL ENERGY", "FLOAT", dislay_vario)
+
+fs2020_variable_subscribe("PLANE ALTITUDE", "Feet", display_altitude)
