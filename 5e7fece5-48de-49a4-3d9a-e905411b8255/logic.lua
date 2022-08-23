@@ -9,34 +9,42 @@ G = {
 
 -- Instrument settings
 S = {
-    AVG_VARIO_PERIOD = 20,
-    VARIO_UNIT = "m/s",
-    ALTITUDE_UNIT = "m",
+    AVG_PERIOD = 20,
+    SPEED_UNIT = "m/s"
 }
 
--- Background
+-- Instrument UI configuration
 img_add_fullscreen("ls100_bg.png")
-img_vario_unit = txt_add(S.VARIO_UNIT, " font:" .. G.FONT .. "; color:" .. G.COLOR_INVERTED .. ";  size:23; valign:center; halign: right;", 310, 440, 30, 23)
-
--- Vario
-txt_add("Avg.vario", " font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 150, 150, G.LABEL_SIZE)
-txt_add(S.VARIO_UNIT, " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 205, 155, G.LABEL_SIZE)
-textbox_avg_vario = txt_add("0", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:80; valign:center; halign: right;", 135, 165, 155, 80)
+text_speed_unit = txt_add(S.SPEED_UNIT, " font:" .. G.FONT .. "; color:" .. G.COLOR_INVERTED .. ";  size:23; valign:center; halign: right;", 310, 440, 30, 23)
+img_red_diamond = img_add("ls100_red_diamond.png", 0, 0, 512, 512)
 img_vario_needle = img_add("ls100_vario_needle.png", 0, 0, 512, 512)
-avg_vario = 0
-last_vario_values = {}
 
-
--- Altitude
-txt_add("Altitude", " font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 265, 155, G.LABEL_SIZE)
-txt_add(S.ALTITUDE_UNIT, " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 320, 155, G.LABEL_SIZE)
-textbox_altitude = txt_add("0", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:80; valign:center; halign: right;", 160, 280, 155, 80)
+textbox_1_label = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 150, 150, G.LABEL_SIZE)
+textbox_1_value = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:80; valign:center; halign: right;", 135, 165, 155, 80)
+textbox_1_unit = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 205, 155, G.LABEL_SIZE)
+textbox_2_label = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 265, 155, G.LABEL_SIZE)
+textbox_2_value = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:80; valign:center; halign: right;", 135, 280, 155, 80)
+textbox_2_unit = txt_add("", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 320, 155, G.LABEL_SIZE)
 
 -- Wind
 img_wind_arrow = img_add("ls100_wind_arrow.png", 130, 225, 35, 35)
 textbox_wind_dir = txt_add("0°", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 100, 265, 55, G.LABEL_SIZE)
 txt_add("/", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.LABEL_SIZE .. "; valign:center; halign: left;", 155, 265, 35, G.LABEL_SIZE)
 textbox_wind_velocity = txt_add("0", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.LABEL_SIZE .. "; valign:center; halign: left;", 165, 265, 35, G.LABEL_SIZE)
+
+-- Vario (Total Energy)
+txt_set(textbox_1_label, "Avg.vario")
+txt_set(textbox_1_value, 0)
+txt_set(textbox_1_unit, S.SPEED_UNIT)
+avg_vario = 0
+vario_history = {}
+
+-- Netto Vario
+txt_set(textbox_2_label, "Netto")
+txt_set(textbox_2_value, 0)
+txt_set(textbox_2_unit, S.SPEED_UNIT)
+avg_netto = 0
+netto_history = {}
 
 -- Functions --
 
@@ -60,27 +68,21 @@ function display_wind(wind_direction, wind_velocity, plane_direction)
     txt_set(textbox_wind_velocity, wind_velocity)
 end
 
--- Displays the ground altitude in a textbox
--- @param altitude : the altitude in meters to be displayed as is
-function display_ground_altitude(altitude)
-    altitude = var_cap(altitude, 0, 9999)
-    altitude = var_format(altitude, 0)
-    txt_set(textbox_altitude, altitude)
-end
-
--- Computes the vario average for the period set in "avg_vario_period"
--- @param vn : the latest vario value
-function compute_avg_vario(vn)
+-- Computes the metric average withing the provided history and for the period set in "S.AVG_PERIOD"
+-- @param metric_value : the latest metric value
+-- @param history_table : the metric history table reference
+function compute_avg_metric(metric_value, history_table)
     local sum = 0
     local array_size = 0
-    local tuple = { vn, os.time() }
-    table.insert(last_vario_values, tuple)
-    for index, value_tuple in pairs(last_vario_values) do
+    local tuple = { metric_value, os.time() }
+    table.insert(history_table, tuple)
+
+    for index, value_tuple in pairs(history_table) do
         local now = os.time()
         local value = value_tuple[1]
         local value_time = value_tuple[2]
-        if value_time < now - S.AVG_VARIO_PERIOD then
-            table.remove(last_vario_values, index)
+        if value_time < now - S.AVG_PERIOD then
+            table.remove(history_table, index)
         else
             array_size = array_size + 1
             sum = sum + value
@@ -89,26 +91,41 @@ function compute_avg_vario(vn)
     return sum / array_size
 end
 
--- Makes the red needle display the vario
--- @param vn : the latest vario value
-function dislay_vario(vn)
-    local avg_vario = 0
-    local needle_vn = var_cap(vn, -5.0, 5.0)
-    rotate(img_vario_needle, 240 / 10 * needle_vn)
+-- Sets the orange needle to the total energy vario value and writes the avg. vario in the 1st textbox
+-- @param vario : the latest total energy vario value
+function dislay_vario(vario)
+    local caped_vario = var_cap(vario, -5.0, 5.0)
+    rotate(img_vario_needle, 240 / 10 * caped_vario)
 
-    avg_vario = compute_avg_vario(vn)
-    avg_vario = var_round(avg_vario, 1)
+    local avg_vario = 0
+    avg_vario = compute_avg_metric(vario, vario_history)
     local op = ""
     if avg_vario > 0 then
         op = "+"
     end
-    local formated_str = string.format("%s%.1f", op, avg_vario)
-    txt_set(textbox_avg_vario, formated_str)
+    avg_vario = string.format("%s%.1f", op, avg_vario)
+    txt_set(textbox_1_value, avg_vario)
+end
+
+-- Sets the red diamond to the avg. netto and writes the current netto in the 2nd texbox
+-- @param netto : the latest netto value
+function dislay_netto(netto)
+    local avg_netto = 0
+    avg_netto = compute_avg_metric(netto, netto_history)
+    avg_netto = var_cap(avg_netto, -5.0, 5.0)
+    rotate(img_red_diamond, 240 / 10 * avg_netto)
+
+    local op = ""
+    if netto > 0 then
+        op = "+"
+    end
+    netto = string.format("%s%.1f", op, netto)
+    txt_set(textbox_2_value, netto)
 end
 
 -- Subscriptions
 fs2020_variable_subscribe("AMBIENT WIND DIRECTION","Degrees", "AMBIENT WIND VELOCITY", "Knots", "HEADING INDICATOR", "Radians", display_wind)
 
-fs2020_variable_subscribe("INDICATED ALTITUDE", "Meters", display_ground_altitude)
+fs2020_variable_subscribe("L:NETTO", "FLOAT", dislay_netto)
 
-fs2020_variable_subscribe("L:VARIO_NEEDLE", "FLOAT", dislay_vario)
+fs2020_variable_subscribe("L:TOTAL ENERGY", "FLOAT", dislay_vario)
