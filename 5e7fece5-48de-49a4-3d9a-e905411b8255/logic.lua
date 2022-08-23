@@ -9,7 +9,8 @@ G = {
 
 -- Instrument settings
 S = {
-    AVG_PERIOD = 20,
+    AVG_VARIO_PERIOD = 20,
+    AVG_NETTO_PERIOD = 10,
     SPEED_UNIT = "m/s",
     ALTITUDE_UNIT = "m",
 }
@@ -80,10 +81,11 @@ function display_altitude(altitude)
     txt_set(navbox_2_value, altitude)
 end
 
--- Computes the metric average withing the provided history and for the period set in "S.AVG_PERIOD"
+-- Computes the metric average withing the provided history
 -- @param metric_value : the latest metric value
 -- @param history_table : the metric history table reference
-function compute_avg_metric(metric_value, history_table)
+-- @param period : the period on which the average is computed
+function compute_avg_metric(metric_value, history_table, period)
     local sum = 0
     local array_size = 0
     local tuple = { metric_value, os.time() }
@@ -93,7 +95,7 @@ function compute_avg_metric(metric_value, history_table)
         local now = os.time()
         local value = value_tuple[1]
         local value_time = value_tuple[2]
-        if value_time < now - S.AVG_PERIOD then
+        if value_time < now - period then
             table.remove(history_table, index)
         else
             array_size = array_size + 1
@@ -110,7 +112,7 @@ function dislay_vario(vario)
     rotate(img_vario_needle, 240 / 10 * caped_vario)
 
     local avg_vario = 0
-    avg_vario = compute_avg_metric(vario, vario_history)
+    avg_vario = compute_avg_metric(vario, vario_history, S.AVG_VARIO_PERIOD)
     local op = ""
     if avg_vario > 0 then
         op = "+"
@@ -123,7 +125,7 @@ end
 -- @param netto : the latest netto value
 function dislay_netto(netto)
     local avg_netto = 0
-    avg_netto = compute_avg_metric(netto, netto_history)
+    avg_netto = compute_avg_metric(netto, netto_history, S.AVG_NETTO_PERIOD)
     avg_netto = var_cap(avg_netto, -5.0, 5.0)
     rotate(img_red_diamond, 240 / 10 * avg_netto)
 end

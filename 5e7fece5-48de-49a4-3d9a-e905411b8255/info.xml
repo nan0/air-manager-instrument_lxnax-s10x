@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?><pluginstrument><aircraft>Discus 2c</aircraft><type>Vario lxnav S10x</type><uuid>5e7fece5-48de-49a4-3d9a-e905411b8255</uuid><author>Nans Plancher</author><description>Lxnav S10x implementation for the discus 2c glider
 
-Features implemented : 
-- Vario speed in a  +/-5 m/s range. Vario needle in medium size
-- Relative wind direction arrow, wind direction and speed within a textbox in m/s
-- Avg vario on a period of 20s
-- Altitude in meters
+Features implemented :
+    - Vario speed in a  +/-5 m/s range. Needle in medium size
+    - Avg wind direction and speed in knots
+    - Avg vario within a period of 20s
+    - Altitude in meters
 
 Github repository : https://github.com/nan0/air-manager-instrument_lxnax-s10x</description><compatibleFSX>false</compatibleFSX><compatibleP3D>false</compatibleP3D><compatibleXPL>false</compatibleXPL><compatibleFS2>false</compatibleFS2><compatibleFS2020>true</compatibleFS2020><version>100</version><configVersion>1</configVersion><pluginInterfaceVersion>100</pluginInterfaceVersion><prefWidth>512</prefWidth><prefHeight>512</prefHeight><source>ONLINE</source><platforms><platform>ANDROID</platform><platform>WINDOWS</platform></platforms><tiers><tier>HOME_USE_STANDARD</tier></tiers></pluginstrument>
