@@ -1,111 +1,32 @@
--- Global constants
-G = {
-    FONT = "roboto_regular.ttf",
-    COLOR_PRIMARY = "white",
-    COLOR_SECONDARY = "#c2c4c2",
-    COLOR_INVERTED = "black",
-    TEXT_SIZE = 26,
-}
-
--- Instrument settings
-S_AVG_VARIO_TIME = 20
-S_AVG_NETTO_TIME = 10
-
--- Shared functions
-
--- Prepends the "+" sign the the value provided if it's positive
--- @param numberValue : the value to be prepended
--- @returns : the "+" prepended number
-function prependPlus(numberValue)
-    local op = ""
-    if numberValue > 0 then
-        op = "+"
-    end
-    return op .. numberValue
-end
-
--- Creates and displays a Navbox
--- @param position : the position of the navbox, between 1 and 4
--- @param label : the label of the navbox
--- @param value : the value of the navbox
--- @param unit : the unit of the navbox
--- @returns : the navbox object
-local Navbox = {}
-Navbox.new = function(position, label, value, unit)
-    if (position < 1 or position > 4) then
-        error("The position must be between 1 and 4")
-    end
-    local self = {}
-    local y = 30 + position * 75;
-    label = string.format(label or "")
-    value = string.format(value or "")
-    unit = string.format(unit or "")
-    self.label = txt_add(label, "font:" .. G.FONT .. ";color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";halign:right;", 175, y, 155, G.TEXT_SIZE)
-    self.value = txt_add(value, "font:" .. G.FONT .. ";color:" .. G.COLOR_PRIMARY .. ";size:70;halign:right;", 145, y + 10, 155, 70)
-    self.unit = txt_add(unit, " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. 20 .. "; valign:center; halign: left;", 300, y + 50, 35, 20)
-
-    function self.setValue(value, unit)
-        txt_set(self.value, value)
-        txt_set(self.unit, unit)
-    end
-
-    return self
-end
-
--- Computes the metric average withing the provided history
--- @param metricValue : the latest metric value
--- @param historyTable : the metric history table reference
--- @param period : the period on which the average is computed
--- @returns : the computed average
-function computeAvgMetric(metricValue, historyTable, period)
-    local sum = 0
-    local arraySize = 0
-    local tuple = { metricValue, os.time() }
-    table.insert(historyTable, tuple)
-
-    for index, valueTuple in pairs(historyTable) do
-        local now = os.time()
-        local value = valueTuple[1]
-        local value_time = valueTuple[2]
-        if value_time < now - period then
-            table.remove(historyTable, index)
-        else
-            arraySize = arraySize + 1
-            sum = sum + value
-        end
-    end
-    return sum / arraySize
-end
 
 -- Instrument UI configuration
 img_add_fullscreen("ls100_bg.png")
-textSpeedUnit = txt_add("m/s", " font:" .. G.FONT .. "; color:" .. G.COLOR_INVERTED .. ";  size:23;  halign: right;", 310, 440, 30, 23)
-imgRedDiamond = img_add("ls100_red_diamond.png", 0, 0, 512, 512)
-imgVarioNeedle = img_add("ls100_vario_needle.png", 0, 0, 512, 512)
+local textSpeedUnit = txt_add("m/s", " font:" .. G.FONT .. "; color:" .. G.COLOR_INVERTED .. ";  size:23;  halign: right;", 310, 440, 30, 23)
+local imgRedDiamond = img_add("ls100_red_diamond.png", 0, 0, 512, 512)
+local imgVarioNeedle = img_add("ls100_vario_needle.png", 0, 0, 512, 512)
 
 -- Wind "Box"
-imgWindArrow = img_add("ls100_wind_arrow.png", 120, 225, 35, 35)
-navboxWindDir = txt_add("0°", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: right;", 90, 265, 55, G.TEXT_SIZE)
+local imgWindArrow = img_add("ls100_wind_arrow.png", 120, 225, 35, 35)
+local navboxWindDir = txt_add("0°", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: right;", 90, 265, 55, G.TEXT_SIZE)
 txt_add("/", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: left;", 145, 265, 35, G.TEXT_SIZE)
-navboxWindVelocity = txt_add("0", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: left;", 155, 265, 35, G.TEXT_SIZE)
+local navboxWindVelocity = txt_add("0", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: left;", 155, 265, 35, G.TEXT_SIZE)
 
--- Vario (Total Energy)
+-- Navbox Vario (Total Energy)
 local navbox1 = Navbox.new(1, "Avg.vario", 0)
-avgVario = 0
-vario_history = {}
+local avgVario = 0
+local vario_history = {}
 
--- Netto Vario
+-- Navbox Netto
 local navbox2 = Navbox.new(2, "Netto", 0)
-avgNetto = 0
-nettoHistory = {}
+local avgNetto = 0
+local nettoHistory = {}
 
--- Altitude
+-- Navbox Altitude
 local navbox3 = Navbox.new(3, "Altitude", 0)
 
--- TAS
+-- Navbox TAS
 local navbox4 = Navbox.new(4, "TAS", 0)
 
--- Functions --
 
 -- Displays the wind direction in a arrow icon and in a textbox
 -- @param velocity : the wind velocity in knots to be displayed in m/s
