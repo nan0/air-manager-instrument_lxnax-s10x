@@ -28,7 +28,7 @@ function dislayVario(totalEnergy)
     avgVario = computeAvgMetric(totalEnergy, varioHistory, S_AVG_VARIO_TIME)
     avgVario = prependPlus(avgVario)
     avgVario = string.format("%.1f", avgVario)
-    vario.navbox1.setValue(avgVario, "m/s")
+    vario.navboxAvgVario.setValue(avgVario)
 end
 
 -- Sets the red diamond to the avg. netto and writes the current netto in the 2nd navbox
@@ -41,7 +41,7 @@ function displayNetto(netto)
 
     netto = prependPlus(netto)
     netto = string.format("%.1f", netto)
-    vario.navbox2.setValue(netto, "m/s")
+    vario.navboxNetto.setValue(netto)
 end
 
 -- Writes the altitude in the 3rd navbox
@@ -50,7 +50,7 @@ function displayAltitude(altitude)
     altitude = 3048 / 10000 * altitude
     altitude = var_cap(altitude, 0, 9999)
     altitude = var_format(altitude, 0)
-    vario.navbox3.setValue(altitude, "m")
+    vario.navboxAltitude.setValue(altitude)
 end
 
 -- Writes the TAS in the 4th navbox
@@ -59,7 +59,7 @@ function displayAirspeed(tas)
     tas = tas * 1852 / 1000 --converting to km/h
     tas = var_cap(tas, 0, 9999)
     tas = string.format("%.0f", tas)
-    vario.navbox4.setValue(tas, "km/h")
+    vario.navboxTAS.setValue(tas)
 end
 
 -- Subscriptions

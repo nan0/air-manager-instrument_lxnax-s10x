@@ -1,15 +1,8 @@
--- Displays and rotate the vario Vario
--- @param value : the value for the Vario to display
+-- The vario main object
 -- @returns : the Vario object
 Vario = {}
-Vario.new = function(value)
+Vario.new = function()
     local self = {}
-    img_add_fullscreen("ls100_bg.png")
-    txt_add("m/s", " font:" .. G.FONT .. "; color:" .. G.COLOR_INVERTED .. ";  size:23;  halign: right;", 310, 440, 30, 23)
-
-    self.redDiamond = RedDiamond.new()
-    self.needle = Needle.new()
-    self.windbox = Windbox.new()
 
     function addNavbox(position, label, value, unit)
         if (position < 1 or position > 4) then
@@ -20,10 +13,16 @@ Vario.new = function(value)
         return Navbox.new(y, label, value, unit)
     end
 
-    self.navbox1 = addNavbox(1, "Avg.vario", 0, "m/s")
-    self.navbox2 = addNavbox(2, "Netto", 0, "m/s")
-    self.navbox3 = addNavbox(3, "Altitude", 0, "m")
-    self.navbox4 = addNavbox(4, "True airspeed", 0, "km/h")
+    img_add_fullscreen("ls100_bg.png")
+    txt_add("m/s", "font:" .. G.FONT .. "; color:" .. G.COLOR_INVERTED .. "; size:23; halign: right;", 310, 440, 30, 23)
+
+    self.redDiamond = RedDiamond.new()
+    self.needle = Needle.new()
+    self.windbox = Windbox.new()
+    self.navboxAvgVario = addNavbox(1, "Avg.vario", 0, "m/s")
+    self.navboxNetto = addNavbox(2, "Netto", 0, "m/s")
+    self.navboxAltitude = addNavbox(3, "Altitude", 0, "m")
+    self.navboxTAS = addNavbox(4, "True airspeed", 0, "km/h")
 
     return self
 end
