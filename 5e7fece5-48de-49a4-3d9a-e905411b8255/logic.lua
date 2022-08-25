@@ -2,7 +2,9 @@
 -- Instrument UI configuration
 img_add_fullscreen("ls100_bg.png")
 local textSpeedUnit = txt_add("m/s", " font:" .. G.FONT .. "; color:" .. G.COLOR_INVERTED .. ";  size:23;  halign: right;", 310, 440, 30, 23)
-local imgRedDiamond = img_add("ls100_red_diamond.png", 0, 0, 512, 512)
+
+-- The red diamond
+local redDiamond = RedDiamond.new()
 
 -- The vario needle
 local needle = Needle.new()
@@ -60,7 +62,7 @@ function displayNetto(netto)
     local avgNetto = 0
     avgNetto = computeAvgMetric(netto, nettoHistory, S_AVG_NETTO_TIME)
     avgNetto = var_cap(avgNetto, -5.0, 5.0)
-    rotate(imgRedDiamond, 240 / 10 * avgNetto)
+    redDiamond.setValue(avgNetto)
 
     netto = prependPlus(netto)
     netto = string.format("%.1f", netto)
