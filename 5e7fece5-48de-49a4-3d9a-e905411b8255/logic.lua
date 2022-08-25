@@ -18,16 +18,16 @@ function displayWind(windDirection, windVelocity, planeDirection)
     vario.windbox.setVelocity(windVelocity)
 end
 
--- Sets the orange needle to the total energy vario value and writes the avg. vario in the 1st navbox
+-- Sets the orange needle to the total energy vario value, writes the avg. vario in the 1st navbox and displays the min/max vario in the yellow line
 -- @param vario : the latest total energy vario value
 function dislayVario(totalEnergy)
-    local capedVario = var_cap(totalEnergy, -5.0, 5.0)
-    vario.needle.setValue(capedVario)
+    vario.needle.setValue(totalEnergy)
 
     avgVario = varioHistory.addAndCompute(totalEnergy).getAvg()
     avgVario = prependPlus(avgVario)
     avgVario = string.format("%.1f", avgVario)
     vario.navboxAvgVario.setValue(avgVario)
+    vario.yellowBar.setValue(varioHistory.getMin(), varioHistory.getMax())
 end
 
 -- Sets the red diamond to the avg. netto and writes the current netto in the 2nd navbox
@@ -35,7 +35,6 @@ end
 function displayNetto(netto)
     local avgNetto = 0
     avgNetto = nettoHistory.addAndCompute(netto).getAvg()
-    avgNetto = var_cap(avgNetto, -5.0, 5.0)
     vario.redDiamond.setValue(avgNetto)
 
     netto = prependPlus(netto)

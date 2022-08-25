@@ -13,9 +13,9 @@ Vario.new = function()
         return Navbox.new(y, label, value, unit)
     end
 
+    self.yellowBar = YellowBar.new()
     img_add_fullscreen("ls100_bg.png")
     txt_add("m/s", "font:" .. G.FONT .. "; color:" .. G.COLOR_INVERTED .. "; size:23; halign: right;", 310, 440, 30, 23)
-
     self.redDiamond = RedDiamond.new()
     self.needle = Needle.new()
     self.windbox = Windbox.new()

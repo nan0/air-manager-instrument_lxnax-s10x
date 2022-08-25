@@ -9,7 +9,8 @@ Needle.new = function(value)
     -- Rotates the needle according to the value provided
     -- @param value : the value to display
     function self.setValue(value)
-        rotate(imgVarioNeedle, 240 / 10 * value)
+        value = var_cap(240 / 10 * value, -120, 120)
+        rotate(imgVarioNeedle, value)
     end
 
     return self

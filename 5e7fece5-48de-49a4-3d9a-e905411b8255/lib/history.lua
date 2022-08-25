@@ -4,7 +4,6 @@ History = {}
 History.new = function(period)
     local self = {}
     local historyTable = {}
-    local period = period
     local min = 0
     local max = 0
     local avg = 0
@@ -24,36 +23,40 @@ History.new = function(period)
         return avg
     end
 
+    local function clearExpiredValues()
+        -- Removing expired values
+        local now = os.time()
+        local i = 1
+        while historyTable[i] and historyTable[i][2] < now - period do
+            table.remove(historyTable, i)
+            i = i + 1
+        end
+    end
     -- Adds a value to the history and computes it
     -- @param elem : the history element to add
     -- @returns : the refreshed history object
     function self.addAndCompute(elem)
-        local sum = 0
+        clearExpiredValues()
         local res = {}
-
         local arraySize = 0
+        local sum = 0
         local tuple = { elem, os.time() }
         table.insert(historyTable, tuple)
-
+        min = 0
+        max = 0
         for index, valueTuple in pairs(historyTable) do
-            local now = os.time()
             local value = valueTuple[1]
-            local value_time = valueTuple[2]
-            if value_time < now - period then
-                table.remove(historyTable, index)
-            else
-                arraySize = arraySize + 1
-                sum = sum + value
+            arraySize = arraySize + 1
+            sum = sum + value
 
-                if value > max then
-                    max = value
-                end
-                if value < min then
-                    min = value
-                end
+            if value < min then
+                min = value
+            end
+
+            if value > max then
+                max = value
             end
         end
-
         avg = sum / arraySize
         return self
     end
