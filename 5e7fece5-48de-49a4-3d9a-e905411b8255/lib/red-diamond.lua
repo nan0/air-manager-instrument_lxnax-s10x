@@ -2,7 +2,7 @@
 -- @param value : the value for the red diamond to display
 -- @returns : the RedDiamond object
 RedDiamond = {}
-RedDiamond.new = function(value)
+RedDiamond.new = function()
     local self = {}
     local imgRedDiamond = img_add("ls100_red_diamond.png", 0, 0, 512, 512)
 

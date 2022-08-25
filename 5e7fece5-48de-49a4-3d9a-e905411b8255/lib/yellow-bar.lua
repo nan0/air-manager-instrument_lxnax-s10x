@@ -3,7 +3,7 @@
 -- @param max : the max value for the YellowBar to display
 -- @returns : the YellowBar object
 YellowBar = {}
-YellowBar.new = function(value)
+YellowBar.new = function()
     local self = {}
     local imgVarioYellowBar = img_add("ls100_yellow_bar.png", 0, 0, 512, 512)
     local imgVarioYellowCoverTop = img_add("ls100_yellow_bar_half_cover.png", 0, 0, 512, 512)

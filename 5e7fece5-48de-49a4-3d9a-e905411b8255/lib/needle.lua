@@ -2,7 +2,7 @@
 -- @param value : the value for the needle to display
 -- @returns : the Needle object
 Needle = {}
-Needle.new = function(value)
+Needle.new = function()
     local self = {}
     local imgVarioNeedle = img_add("ls100_vario_needle.png", 0, 0, 512, 512)
 
