@@ -1,6 +1,6 @@
 local vario = Vario.new()
-local varioHistory = {}
-local nettoHistory = {}
+varioHistory = History.new(S_AVG_VARIO_TIME)
+nettoHistory = History.new(S_AVG_NETTO_TIME)
 
 -- Displays the wind direction in a arrow icon and in a textbox
 -- @param windDirection : the wind velocity in degrees
@@ -24,8 +24,7 @@ function dislayVario(totalEnergy)
     local capedVario = var_cap(totalEnergy, -5.0, 5.0)
     vario.needle.setValue(capedVario)
 
-    local avgVario = 0
-    avgVario = computeAvgMetric(totalEnergy, varioHistory, S_AVG_VARIO_TIME)
+    avgVario = varioHistory.addAndCompute(totalEnergy).getAvg()
     avgVario = prependPlus(avgVario)
     avgVario = string.format("%.1f", avgVario)
     vario.navboxAvgVario.setValue(avgVario)
@@ -35,7 +34,7 @@ end
 -- @param netto : the latest netto value
 function displayNetto(netto)
     local avgNetto = 0
-    avgNetto = computeAvgMetric(netto, nettoHistory, S_AVG_NETTO_TIME)
+    avgNetto = nettoHistory.addAndCompute(netto).getAvg()
     avgNetto = var_cap(avgNetto, -5.0, 5.0)
     vario.redDiamond.setValue(avgNetto)
 
