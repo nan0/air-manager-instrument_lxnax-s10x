@@ -5,43 +5,36 @@ local textSpeedUnit = txt_add("m/s", " font:" .. G.FONT .. "; color:" .. G.COLOR
 local imgRedDiamond = img_add("ls100_red_diamond.png", 0, 0, 512, 512)
 local imgVarioNeedle = img_add("ls100_vario_needle.png", 0, 0, 512, 512)
 
--- Wind "Box"
-local imgWindArrow = img_add("ls100_wind_arrow.png", 120, 225, 35, 35)
-local navboxWindDir = txt_add("0°", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: right;", 90, 265, 55, G.TEXT_SIZE)
-txt_add("/", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: left;", 145, 265, 35, G.TEXT_SIZE)
-local navboxWindVelocity = txt_add("0", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: left;", 155, 265, 35, G.TEXT_SIZE)
+-- Wind information box
+local windbox = Windbox.new()
 
 -- Navbox Vario (Total Energy)
 local navbox1 = Navbox.new(1, "Avg.vario", 0)
-local avgVario = 0
 local vario_history = {}
 
 -- Navbox Netto
 local navbox2 = Navbox.new(2, "Netto", 0)
-local avgNetto = 0
 local nettoHistory = {}
 
 -- Navbox Altitude
 local navbox3 = Navbox.new(3, "Altitude", 0)
 
 -- Navbox TAS
-local navbox4 = Navbox.new(4, "TAS", 0)
+local navbox4 = Navbox.new(4, "True airspeed", 0)
 
 
 -- Displays the wind direction in a arrow icon and in a textbox
--- @param velocity : the wind velocity in knots to be displayed in m/s
--- @param direction : the wind direction in degrees
+-- @param windDirection : the wind velocity in degrees
+-- @param windVelocity : the wind velocity in knots to be displayed in m/s
+-- @param planeDirection : the plane direction in radians
 function displayWind(windDirection, windVelocity, planeDirection)
     planeDirection = var_round(180 / math.pi * planeDirection, 0)
     local direction = windDirection - planeDirection
-    rotate(imgWindArrow, direction)
-
-    direction = string.format("%.0f°", windDirection)
-    txt_set(navboxWindDir, direction)
+    windbox.setRelativeDirection(direction)
 
     windVelocity = windVelocity / 1.94 -- Converting knots to m/s
     windVelocity = var_format(windVelocity, 0)
-    txt_set(navboxWindVelocity, windVelocity)
+    windbox.setVelocity(windVelocity)
 end
 
 -- Sets the orange needle to the total energy vario value and writes the avg. vario in the 1st navbox

@@ -9,6 +9,7 @@ Navbox.new = function(position, label, value, unit)
     if (position < 1 or position > 4) then
         error("The position must be between 1 and 4")
     end
+
     local self = {}
     local y = 30 + position * 75;
     label = string.format(label or "")
