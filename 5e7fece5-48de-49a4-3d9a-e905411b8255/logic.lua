@@ -3,7 +3,9 @@
 img_add_fullscreen("ls100_bg.png")
 local textSpeedUnit = txt_add("m/s", " font:" .. G.FONT .. "; color:" .. G.COLOR_INVERTED .. ";  size:23;  halign: right;", 310, 440, 30, 23)
 local imgRedDiamond = img_add("ls100_red_diamond.png", 0, 0, 512, 512)
-local imgVarioNeedle = img_add("ls100_vario_needle.png", 0, 0, 512, 512)
+
+-- The vario needle
+local needle = Needle.new()
 
 -- Wind information box
 local windbox = Windbox.new()
@@ -28,6 +30,8 @@ local navbox4 = Navbox.new(4, "True airspeed", 0)
 -- @param windVelocity : the wind velocity in knots to be displayed in m/s
 -- @param planeDirection : the plane direction in radians
 function displayWind(windDirection, windVelocity, planeDirection)
+    windbox.setWindDirection(windDirection)
+
     planeDirection = var_round(180 / math.pi * planeDirection, 0)
     local direction = windDirection - planeDirection
     windbox.setRelativeDirection(direction)
@@ -41,7 +45,7 @@ end
 -- @param vario : the latest total energy vario value
 function dislayVario(vario)
     local capedVario = var_cap(vario, -5.0, 5.0)
-    rotate(imgVarioNeedle, 240 / 10 * capedVario)
+    needle.setValue(capedVario)
 
     local avgVario = 0
     avgVario = computeAvgMetric(vario, vario_history, S_AVG_VARIO_TIME)

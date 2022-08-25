@@ -19,6 +19,9 @@ Navbox.new = function(position, label, value, unit)
     self.value = txt_add(value, "font:" .. G.FONT .. ";color:" .. G.COLOR_PRIMARY .. ";size:70;halign:right;", 145, y + 10, 155, 70)
     self.unit = txt_add(unit, " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. 20 .. "; valign:center; halign: left;", 300, y + 50, 35, 20)
 
+    -- Sets the text value and unit of the navbox
+    -- @param value : the value to display
+    -- @param unit : the unit to display
     function self.setValue(value, unit)
         txt_set(self.value, value)
         txt_set(self.unit, unit)
