@@ -4,12 +4,12 @@
 RedDiamond = {}
 RedDiamond.new = function(value)
     local self = {}
-    self.imgRedDiamond = img_add("ls100_red_diamond.png", 0, 0, 512, 512)
+    local imgRedDiamond = img_add("ls100_red_diamond.png", 0, 0, 512, 512)
 
     -- Rotates the RedDiamond according to the value provided
     -- @param value : the value to display
     function self.setValue(value)
-        rotate(self.imgRedDiamond, 240 / 10 * value)
+        rotate(imgRedDiamond, 240 / 10 * value)
     end
 
     return self
