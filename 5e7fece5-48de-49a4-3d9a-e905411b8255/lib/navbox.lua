@@ -1,17 +1,13 @@
 -- Creates and displays a Navbox
--- @param position : the position of the navbox, between 1 and 4
+-- @param y : the y axis position of the navbox
 -- @param label : the label of the navbox
 -- @param value : the value of the navbox
 -- @param unit : the unit of the navbox
 -- @returns : the navbox object
 Navbox = {}
-Navbox.new = function(position, label, value, unit)
-    if (position < 1 or position > 4) then
-        error("The position must be between 1 and 4")
-    end
-
+Navbox.new = function(y, label, value, unit)
     local self = {}
-    local y = 30 + position * 75;
+
     label = string.format(label or "")
     value = string.format(value or "")
     unit = string.format(unit or "")
@@ -21,10 +17,8 @@ Navbox.new = function(position, label, value, unit)
 
     -- Sets the text value and unit of the navbox
     -- @param value : the value to display
-    -- @param unit : the unit to display
-    function self.setValue(value, unit)
+    function self.setValue(value)
         txt_set(self.value, value)
-        txt_set(self.unit, unit)
     end
 
     return self
