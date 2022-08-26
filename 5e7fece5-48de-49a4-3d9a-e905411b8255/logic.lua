@@ -1,114 +1,68 @@
--- Global constants
-G = {
-    FONT = "roboto_regular.ttf",
-    COLOR_PRIMARY = "white",
-    COLOR_SECONDARY = "#c2c4c2",
-    COLOR_INVERTED = "black",
-    LABEL_SIZE = 28,
-}
-
--- Instrument settings
-S = {
-    AVG_VARIO_PERIOD = 20,
-    VARIO_UNIT = "m/s",
-    ALTITUDE_UNIT = "m",
-}
-
--- Background
-img_add_fullscreen("ls100_bg.png")
-img_vario_unit = txt_add(S.VARIO_UNIT, " font:" .. G.FONT .. "; color:" .. G.COLOR_INVERTED .. ";  size:23; valign:center; halign: right;", 310, 440, 30, 23)
-
--- Vario
-txt_add("Avg.vario", " font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 150, 150, G.LABEL_SIZE)
-txt_add(S.VARIO_UNIT, " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 205, 155, G.LABEL_SIZE)
-textbox_avg_vario = txt_add("0", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:80; valign:center; halign: right;", 135, 165, 155, 80)
-img_vario_needle = img_add("ls100_vario_needle.png", 0, 0, 512, 512)
-avg_vario = 0
-last_vario_values = {}
-
-
--- Altitude
-txt_add("Altitude", " font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 265, 155, G.LABEL_SIZE)
-txt_add(S.ALTITUDE_UNIT, " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 175, 320, 155, G.LABEL_SIZE)
-textbox_altitude = txt_add("0", " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:80; valign:center; halign: right;", 160, 280, 155, 80)
-
--- Wind
-img_wind_arrow = img_add("ls100_wind_arrow.png", 130, 225, 35, 35)
-textbox_wind_dir = txt_add("0°", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.LABEL_SIZE .. "; valign:center; halign: right;", 100, 265, 55, G.LABEL_SIZE)
-txt_add("/", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.LABEL_SIZE .. "; valign:center; halign: left;", 155, 265, 35, G.LABEL_SIZE)
-textbox_wind_velocity = txt_add("0", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.LABEL_SIZE .. "; valign:center; halign: left;", 165, 265, 35, G.LABEL_SIZE)
-
--- Functions --
+local vario = Vario.new()
+varioHistory = History.new(S_AVG_VARIO_TIME)
+nettoHistory = History.new(S_AVG_NETTO_TIME)
 
 -- Displays the wind direction in a arrow icon and in a textbox
--- @param velocity : the wind velocity in knots to be displayed in m/s to be displayed
--- @param direction : the wind direction in degrees
-function display_wind(wind_direction, wind_velocity, plane_direction)
+-- @param windDirection : the wind velocity in degrees
+-- @param windVelocity : the wind velocity in knots to be displayed in m/s
+-- @param planeDirection : the plane direction in radians
+function displayWind(windDirection, windVelocity, planeDirection)
+    vario.windbox.setWindDirection(windDirection)
 
-    plane_direction = var_round(180 / math.pi * plane_direction, 0)
-    local direction =  wind_direction - plane_direction
-    -- Rotating wind direction arrow
-    rotate(img_wind_arrow, direction)
+    planeDirection = var_round(180 / math.pi * planeDirection, 0)
+    local direction = windDirection - planeDirection
+    vario.windbox.setRelativeDirection(direction)
 
-    -- Adding wind direction angle as text
-    direction = string.format("%.0f°", wind_direction)
-    txt_set(textbox_wind_dir, direction)
-
-    -- Adding wind velocity
-    wind_velocity = wind_velocity / 1.94 -- Converting knots to m/s
-    wind_velocity = var_format(wind_velocity, 0)
-    txt_set(textbox_wind_velocity, wind_velocity)
+    windVelocity = windVelocity / 1.94 -- Converting knots to m/s
+    windVelocity = var_format(windVelocity, 0)
+    vario.windbox.setVelocity(windVelocity)
 end
 
--- Displays the ground altitude in a textbox
--- @param altitude : the altitude in meters to be displayed as is
-function display_ground_altitude(altitude)
+-- Sets the orange needle to the total energy vario value, writes the avg. vario in the 1st navbox and displays the min/max vario in the yellow line
+-- @param vario : the latest total energy vario value
+function dislayVario(totalEnergy)
+    vario.needle.setValue(totalEnergy)
+
+    avgVario = varioHistory.addAndCompute(totalEnergy).getAvg()
+    avgVario = prependPlus(avgVario)
+    avgVario = string.format("%.1f", avgVario)
+    vario.navboxAvgVario.setValue(avgVario)
+    vario.yellowBar.setValue(varioHistory.getMin(), varioHistory.getMax())
+end
+
+-- Sets the red diamond to the avg. netto and writes the current netto in the 2nd navbox
+-- @param netto : the latest netto value
+function displayNetto(netto)
+    local avgNetto = 0
+    avgNetto = nettoHistory.addAndCompute(netto).getAvg()
+    vario.redDiamond.setValue(avgNetto)
+
+    netto = prependPlus(netto)
+    netto = string.format("%.1f", netto)
+    vario.navboxNetto.setValue(netto)
+end
+
+-- Writes the altitude in the 3rd navbox
+-- @param altitude : the altitude in ft to be displayed in meters
+function displayAltitude(altitude)
+    altitude = 3048 / 10000 * altitude
     altitude = var_cap(altitude, 0, 9999)
     altitude = var_format(altitude, 0)
-    txt_set(textbox_altitude, altitude)
+    vario.navboxAltitude.setValue(altitude)
 end
 
--- Computes the vario average for the period set in "avg_vario_period"
--- @param vn : the latest vario value
-function compute_avg_vario(vn)
-    local sum = 0
-    local array_size = 0
-    local tuple = { vn, os.time() }
-    table.insert(last_vario_values, tuple)
-    for index, value_tuple in pairs(last_vario_values) do
-        local now = os.time()
-        local value = value_tuple[1]
-        local value_time = value_tuple[2]
-        if value_time < now - S.AVG_VARIO_PERIOD then
-            table.remove(last_vario_values, index)
-        else
-            array_size = array_size + 1
-            sum = sum + value
-        end
-    end
-    return sum / array_size
-end
-
--- Makes the red needle display the vario
--- @param vn : the latest vario value
-function dislay_vario(vn)
-    local avg_vario = 0
-    local needle_vn = var_cap(vn, -5.0, 5.0)
-    rotate(img_vario_needle, 240 / 10 * needle_vn)
-
-    avg_vario = compute_avg_vario(vn)
-    avg_vario = var_round(avg_vario, 1)
-    local op = ""
-    if avg_vario > 0 then
-        op = "+"
-    end
-    local formated_str = string.format("%s%.1f", op, avg_vario)
-    txt_set(textbox_avg_vario, formated_str)
+-- Writes the TAS in the 4th navbox
+-- @param tas : the tas in knots to be diplayed in km/h
+function displayAirspeed(tas)
+    tas = tas * 1852 / 1000 --converting to km/h
+    tas = var_cap(tas, 0, 9999)
+    tas = string.format("%.0f", tas)
+    vario.navboxTAS.setValue(tas)
 end
 
 -- Subscriptions
-fs2020_variable_subscribe("AMBIENT WIND DIRECTION","Degrees", "AMBIENT WIND VELOCITY", "Knots", "HEADING INDICATOR", "Radians", display_wind)
-
-fs2020_variable_subscribe("INDICATED ALTITUDE", "Meters", display_ground_altitude)
-
-fs2020_variable_subscribe("L:VARIO_NEEDLE", "FLOAT", dislay_vario)
+fs2020_variable_subscribe("AMBIENT WIND DIRECTION", "Degrees", "AMBIENT WIND VELOCITY", "Knots", "HEADING INDICATOR", "Radians", displayWind)
+fs2020_variable_subscribe("L:NETTO", "FLOAT", displayNetto)
+fs2020_variable_subscribe("L:TOTAL ENERGY", "FLOAT", dislayVario)
+fs2020_variable_subscribe("PLANE ALTITUDE", "Feet", displayAltitude)
+fs2020_variable_subscribe("AIRSPEED TRUE", "Knots", displayAirspeed)
