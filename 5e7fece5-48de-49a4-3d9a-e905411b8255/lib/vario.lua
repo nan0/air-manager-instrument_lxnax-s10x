@@ -30,6 +30,12 @@ Vario.new = function()
         self.redDiamond.setValue(avgNetto)
     end
 
+    -- Turn of the vario screen when master if off, turn on when on
+    -- @param on : true if master is on, false otherwise
+    function onMasterChanged(on)
+        self.modeNavigator.currentItem.pageNavigator.currentItem.toggle(on)
+    end
+
     -- Inits the vario
     function init()
         -- Needles and background init
@@ -41,7 +47,6 @@ Vario.new = function()
 
         -- Navigator init
         self.modeNavigator = Navigator.new(availableModes)
-        self.modeNavigator.currentItem.pageNavigator.currentItem.toggle(true)
 
         -- Vario button declarations
         self.knobTop = RotaryButton.new("top", self.modeNavigator.currentItem.onTopKnobPressed, self.modeNavigator.currentItem.onTopKnobRotated)
@@ -50,6 +55,7 @@ Vario.new = function()
         -- Subscriptions
         fs2020_variable_subscribe("L:TOTAL ENERGY", "FLOAT", updateVario)
         fs2020_variable_subscribe("L:NETTO", "FLOAT", updateNetto)
+        fs2020_variable_subscribe("ELECTRICAL MASTER BATTERY", "Bool", onMasterChanged)
     end
 
     init()
