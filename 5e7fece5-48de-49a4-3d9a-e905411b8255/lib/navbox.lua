@@ -7,17 +7,27 @@
 Navbox = {}
 Navbox.new = function(y, label, value, unit)
     local self = {}
+    self.y = y
+
     label = string.format(label or "")
-    label = txt_add(label, "font:" .. G.FONT .. ";color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";halign:right;", 175, y, 155, G.TEXT_SIZE)
+    self.labelTxt = txt_add(label, "font:" .. G.FONT .. ";color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";halign:right;", 175, self.y, 155, G.TEXT_SIZE)
+
+    value = prependPlus(value)
     value = string.format(value or "")
-    value = txt_add(value, "font:" .. G.FONT .. ";color:" .. G.COLOR_PRIMARY .. ";size:70;halign:right;", 145, y + 10, 155, 70)
+    self.valueTxt = txt_add(value, "font:" .. G.FONT .. ";color:" .. G.COLOR_PRIMARY .. ";size:70;halign:right;", 145, self.y + 10, 155, 70)
+
     unit = string.format(unit or "")
-    unit = txt_add(unit, " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. 20 .. "; valign:center; halign: left;", 300, y + 50, 35, 20)
+    self.unitTxt = txt_add(unit, " font:" .. G.FONT .. "; color:" .. G.COLOR_PRIMARY .. ";  size:" .. 20 .. "; valign:center; halign: left;", 300, self.y + 50, 35, 20)
 
     -- Sets the text value and unit of the navbox
     -- @param currentValue : the value to display
     function self.setValue(currentValue)
-        txt_set(value, currentValue)
+        txt_set(self.valueTxt, currentValue)
+    end
+
+    -- Returns the lua node id of the navbox group
+    function self.getNode()
+        return group_add(self.labelTxt, self.valueTxt, self.unitTxt)
     end
 
     return self

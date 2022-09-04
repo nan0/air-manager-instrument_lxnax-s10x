@@ -1,7 +1,5 @@
--- Displays and rotate the yellow bar
--- @param min : the min value for the YellowBar to display
--- @param max : the max value for the YellowBar to display
--- @returns : the YellowBar object
+-- Provides tools to navigate between generic items
+-- @param navigationItems : the fixed item list to navigate into
 Navigator = {}
 Navigator.new = function(navigationItems)
     if (not navigationItems or #navigationItems == 0) then
@@ -19,7 +17,6 @@ Navigator.new = function(navigationItems)
         else
             currentIndex = 1
         end
-        print(currentIndex)
         self.currentItem = navigationItems[currentIndex].new()
     end
 

@@ -1,8 +1,8 @@
 -- The numerical page
 -- @returns : the NumericsPage object
 NumericsPage = {}
-NumericsPage.new = function()
-    local self = {}
+NumericsPage.new = function(enabled)
+    local self = Page.new(enabled)
     local varioHistory = History.new(S_AVG_VARIO_TIME)
 
     -- Add a Navbox at the requested position
@@ -70,14 +70,24 @@ NumericsPage.new = function()
         self.navboxTAS.setValue(tas)
     end
 
+    -- @inheritDoc
+    function self.toggle(on)
+        visible(self.windbox.getNode(), on)
+        visible(self.navboxAvgVario.getNode(), on)
+        visible(self.navboxNetto.getNode(), on)
+        visible(self.navboxAltitude.getNode(), on)
+        visible(self.navboxTAS.getNode(), on)
+    end
+
     -- Inits the page
     function init()
-        print('called')
         self.windbox = Windbox.new()
         self.navboxAvgVario = addNavbox(1, "Avg.vario", 0, "m/s")
         self.navboxNetto = addNavbox(2, "Netto", 0, "m/s")
         self.navboxAltitude = addNavbox(3, "Altitude", 0, "m")
         self.navboxTAS = addNavbox(4, "True airspeed", 0, "km/h")
+
+        self.toggle(false)
 
         -- Subscriptions
         fs2020_variable_subscribe("AMBIENT WIND DIRECTION", "Degrees", "AMBIENT WIND VELOCITY", "Knots", "HEADING INDICATOR", "Radians", displayWind)

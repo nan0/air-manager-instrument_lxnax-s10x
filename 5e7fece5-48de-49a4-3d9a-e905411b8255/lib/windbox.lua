@@ -12,7 +12,7 @@ Windbox.new = function(windDirection, relativeDirection, velocity)
 
     local imgWindArrow = img_add("ls100_wind_arrow.png", 120, 225, 35, 35)
     local windDirectionTxt = txt_add(relativeDirection, "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: right;", 90, 265, 55, G.TEXT_SIZE)
-    txt_add("/", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: left;", 145, 265, 35, G.TEXT_SIZE)
+    local separator = txt_add("/", "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: left;", 145, 265, 35, G.TEXT_SIZE)
     local velocityTxt = txt_add(velocity, "font:" .. G.FONT .. "; color:" .. G.COLOR_SECONDARY .. ";size:" .. G.TEXT_SIZE .. ";  halign: left;", 155, 265, 35, G.TEXT_SIZE)
 
     -- Displays the wind direction as a text
@@ -32,6 +32,11 @@ Windbox.new = function(windDirection, relativeDirection, velocity)
     -- @param velocity : the velocity as a text
     function self.setVelocity(velocity)
         txt_set(velocityTxt, velocity)
+    end
+
+    -- Returns the lua node id of the windbox group
+    function self.getNode()
+        return group_add(imgWindArrow, windDirectionTxt, separator, velocityTxt)
     end
 
     return self

@@ -2,9 +2,6 @@
 -- @returns : the WayPointMode object
 WayPointMode = {}
 WayPointMode.new = function()
-    local self = {}
-    local pages = { NumericsPage }
-    self.navigator = Navigator.new(pages)
-
+    local self = Mode.new({ NumericsPage })
     return self
 end

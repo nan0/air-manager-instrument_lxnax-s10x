@@ -10,3 +10,4 @@ G = {
 -- Instrument settings
 S_AVG_VARIO_TIME = 20
 S_AVG_NETTO_TIME = 10
+S_MACCREADY = 0
