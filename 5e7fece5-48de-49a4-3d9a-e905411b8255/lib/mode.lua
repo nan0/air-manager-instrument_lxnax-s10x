@@ -11,14 +11,23 @@ Mode.new = function(pages)
     self.pageNavigator = Navigator.new(pages)
 
     self.onTopKnobPressed = function()
+        if (not S_MASTER_ON) then
+            return
+        end
         self.pageNavigator.currentItem.onTopKnobPressed(direction)
     end
 
     self.onTopKnobRotated = function(direction)
+        if (not S_MASTER_ON) then
+            return
+        end
         self.pageNavigator.currentItem.onTopKnobRotated(direction)
     end
 
     self.onBottomKnobPressed = function()
+        if (not S_MASTER_ON) then
+            return
+        end
         if (not quickAccessPageOpened) then
             -- Shows the quick Acces Page
             self.pageNavigator.currentItem.toggle(false)
@@ -37,6 +46,9 @@ Mode.new = function(pages)
     end
 
     self.onBottomKnobRotated = function(direction)
+        if (not S_MASTER_ON) then
+            return
+        end
         self.pageNavigator.currentItem.onBottomKnobRotated(direction)
     end
 

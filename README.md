@@ -14,6 +14,7 @@ _A implementation of the S10x glider vario suitable for the Got Friends Discus 2
 ### 1.2.0 _In development_
 - Speed to fly indicator
 - Blue arrow : MacCready setting
+- Switching off the screen when master is off
 
 ### 1.1.0 _Released [[Video review here]](https://youtu.be/dhCVyx4by5A)_
 - Yellow bar : min/ max vario 
