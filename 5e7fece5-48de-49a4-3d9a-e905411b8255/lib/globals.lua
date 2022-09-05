@@ -1,6 +1,6 @@
 -- Global constants
 G = {
-    APP_VERSION = "1.2.0",
+    APP_VERSION = "1.2.0-SNAPSHOT",
     FONT = "roboto_regular.ttf",
     COLOR_PRIMARY = "white",
     COLOR_SECONDARY = "#c2c4c2",
