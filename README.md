@@ -6,8 +6,9 @@ _A implementation of the S10x glider vario suitable for the Got Friends Discus 2
 
 ## Release Plan
 ### 1.x.x _In Planning (Ordered by priority)_
-1. Waypoint mode pages (way point + attitude)
-2. Switching between metric an imperial units
+1. Thermal mode
+2. Waypoint mode pages (way point + attitude)
+3. Switching between metric an imperial units
 4. Be able to change the number and content of the navboxes
 5. Changing avg vario / netto computing time
 

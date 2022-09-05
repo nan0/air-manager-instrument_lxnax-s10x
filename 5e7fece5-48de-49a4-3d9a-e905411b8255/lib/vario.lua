@@ -62,6 +62,8 @@ Vario.new = function()
         -- Inits the splashScreen (visualy switches off the screens)
         splashScreen = SplashScreen.new()
 
+        onMasterChanged(S_MASTER_ON)
+
         -- Subscriptions
         fs2020_variable_subscribe("L:TOTAL ENERGY", "FLOAT", updateVario)
         fs2020_variable_subscribe("L:NETTO", "FLOAT", updateNetto)

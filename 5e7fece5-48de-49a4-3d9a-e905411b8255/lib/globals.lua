@@ -9,7 +9,9 @@ G = {
 }
 
 -- Instrument settings
-S_MASTER_ON = false
+
 S_AVG_VARIO_TIME = 20
 S_AVG_NETTO_TIME = 10
 S_MACCREADY = 0
+S_INIT_TIMEOUT = 0 -- Prod = 3000
+S_MASTER_ON = true -- Prod = false

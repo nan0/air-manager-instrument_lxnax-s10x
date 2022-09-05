@@ -4,6 +4,7 @@ NumericsPage = {}
 NumericsPage.new = function(enabled)
     local self = Page.new(enabled)
     local varioHistory = History.new(S_AVG_VARIO_TIME)
+    local spf = SpeedToFlyIndicator.new()
 
     -- Add a Navbox at the requested position
     -- @param position: the navbox position between 1 and 4
@@ -70,6 +71,12 @@ NumericsPage.new = function(enabled)
         self.navboxTAS.setValue(tas)
     end
 
+    -- Computes and displays the speed to fly
+    -- @param tas : the tas in knots to be diplayed in km/h
+    function displaySpeedToFlyIndicator(tas)
+        spf.displayDiff(120 - tas)
+    end
+
     -- @inheritDoc
     function self.toggle(on)
         visible(self.windbox.getNode(), on)
@@ -77,6 +84,7 @@ NumericsPage.new = function(enabled)
         visible(self.navboxNetto.getNode(), on)
         visible(self.navboxAltitude.getNode(), on)
         visible(self.navboxTAS.getNode(), on)
+        spf.toggle(on)
     end
 
     -- Inits the page
@@ -95,6 +103,7 @@ NumericsPage.new = function(enabled)
         fs2020_variable_subscribe("L:TOTAL ENERGY", "FLOAT", dislayVario)
         fs2020_variable_subscribe("PLANE ALTITUDE", "Feet", displayAltitude)
         fs2020_variable_subscribe("AIRSPEED TRUE", "Knots", displayAirspeed)
+        fs2020_variable_subscribe("AIRSPEED TRUE", "Knots", displaySpeedToFlyIndicator)
     end
 
     init()
