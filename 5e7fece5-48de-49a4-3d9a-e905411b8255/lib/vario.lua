@@ -6,7 +6,7 @@ Vario.new = function()
     local availableModes = { WayPointMode }
     local varioHistory = History.new(S_AVG_VARIO_TIME)
     local nettoHistory = History.new(S_AVG_NETTO_TIME)
-    local backgroundOffCover =  nil
+    local splashScreen = nil
 
     self.modeNavigator = nil
     self.needle = nil
@@ -35,7 +35,11 @@ Vario.new = function()
     -- @param on : true if master is on, false otherwise
     function onMasterChanged(on)
         S_MASTER_ON = on
-        visible(backgroundOffCover, not on)
+        if (on == true) then
+            splashScreen.startup()
+        else
+            splashScreen.stop()
+        end
         self.modeNavigator.currentItem.pageNavigator.currentItem.toggle(on)
     end
 
@@ -55,7 +59,8 @@ Vario.new = function()
         self.knobTop = RotaryButton.new("top", self.modeNavigator.currentItem.onTopKnobPressed, self.modeNavigator.currentItem.onTopKnobRotated)
         self.knobBottom = RotaryButton.new("bottom", self.modeNavigator.currentItem.onBottomKnobPressed, self.modeNavigator.currentItem.onBottomKnobRotated)
 
-        backgroundOffCover = img_add_fullscreen("ls100_bg_off_cover.png")
+        -- Inits the splashScreen (visualy switches off the screens)
+        splashScreen = SplashScreen.new()
 
         -- Subscriptions
         fs2020_variable_subscribe("L:TOTAL ENERGY", "FLOAT", updateVario)
