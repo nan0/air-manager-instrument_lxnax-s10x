@@ -8,3 +8,10 @@ function prependPlus(numberValue)
     end
     return op .. numberValue
 end
+
+-- Converts a amount in pounds to kg
+-- @param nb : the vpound nb to convert
+-- @returns : the value in kg
+function poundsToKg(nb)
+    return 45359237 / 100000000 * nb
+end

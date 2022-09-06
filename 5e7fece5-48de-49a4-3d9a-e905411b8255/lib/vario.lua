@@ -33,7 +33,7 @@ Vario.new = function()
 
     -- Turn of the vario screen when master if off, turn on when on
     -- @param on : true if master is on, false otherwise
-    function onMasterChanged(on)
+    function toggleVario(on)
         S_MASTER_ON = on
         if (on == true) then
             splashScreen.startup()
@@ -41,6 +41,16 @@ Vario.new = function()
             splashScreen.stop()
         end
         self.modeNavigator.currentItem.pageNavigator.currentItem.toggle(on)
+    end
+
+    -- Sets the total weight globally
+    -- @param weight : the total plane weight in pounds
+    function setWeight(weight)
+        if not weight then
+            return
+        end
+        S_TOTAL_WEIGHT = poundsToKg(weight)
+        S_TOTAL_WEIGHT = var_round(S_TOTAL_WEIGHT)
     end
 
     -- Inits the vario
@@ -62,12 +72,13 @@ Vario.new = function()
         -- Inits the splashScreen (visualy switches off the screens)
         splashScreen = SplashScreen.new()
 
-        onMasterChanged(S_MASTER_ON)
+        toggleVario(S_MASTER_ON)
 
         -- Subscriptions
         fs2020_variable_subscribe("L:TOTAL ENERGY", "FLOAT", updateVario)
         fs2020_variable_subscribe("L:NETTO", "FLOAT", updateNetto)
-        fs2020_variable_subscribe("ELECTRICAL MASTER BATTERY", "Bool", onMasterChanged)
+        fs2020_variable_subscribe("ELECTRICAL MASTER BATTERY", "Bool", toggleVario)
+        fs2020_variable_subscribe("TOTAL WEIGHT", "Pounds", setWeight)
     end
 
     init()
