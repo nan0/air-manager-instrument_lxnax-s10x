@@ -3,6 +3,7 @@
 NumericsPage = {}
 NumericsPage.new = function(enabled)
     local self = Page.new(enabled)
+    local switchedOn = enabled
     local varioHistory = History.new(S_AVG_VARIO_TIME)
     local spf = SpeedToFlyIndicator.new()
 
@@ -74,17 +75,21 @@ NumericsPage.new = function(enabled)
     -- Computes and displays the speed to fly
     -- @param tas : the tas in knots to be diplayed in km/h
     function displaySpeedToFlyIndicator(tas)
+        if not switchedOn then
+            return
+        end
         spf.displayDiff(120 - tas)
     end
 
     -- @inheritDoc
     function self.toggle(on)
-        visible(self.windbox.getNode(), on)
-        visible(self.navboxAvgVario.getNode(), on)
-        visible(self.navboxNetto.getNode(), on)
-        visible(self.navboxAltitude.getNode(), on)
-        visible(self.navboxTAS.getNode(), on)
-        spf.toggle(on)
+        switchedOn = on
+        visible(self.windbox.getNode(), switchedOn)
+        visible(self.navboxAvgVario.getNode(), switchedOn)
+        visible(self.navboxNetto.getNode(), switchedOn)
+        visible(self.navboxAltitude.getNode(), switchedOn)
+        visible(self.navboxTAS.getNode(), switchedOn)
+        spf.toggle(switchedOn)
     end
 
     -- Inits the page
