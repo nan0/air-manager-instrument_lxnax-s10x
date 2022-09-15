@@ -15,7 +15,7 @@ NumericsPage.new = function(G)
     -- @param unit: the value unit
     function addNavbox(position, label, value, unit)
         if (position < 1 or position > 4) then
-            error("The position must be between 1 and 4")
+            G.error.raise("The position must be between 1 and 4")
         end
 
         local y = 30 + position * 75
@@ -83,7 +83,6 @@ NumericsPage.new = function(G)
         airspeed = knotsToKmh(airspeed)
         local spf = G.polar.getSpeedToFly(netto)
         local diff = airspeed - spf
-        print('SPF : ' .. spf)
         spfIndicator.displayDiff(diff)
     end
 

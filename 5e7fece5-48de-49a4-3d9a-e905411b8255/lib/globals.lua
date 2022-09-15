@@ -33,6 +33,7 @@ Globals.new = function()
     self.S_TOTAL_WEIGHT = 450]]
 
     self.polar = nil
+    self.error = nil
 
     -- Methods
     function setWeight(weight)
@@ -45,6 +46,7 @@ Globals.new = function()
 
     -- Initializations
     function init()
+        self.error = Error.new()
         self.polar = Polar.new(self)
         fs2020_variable_subscribe("TOTAL WEIGHT", "Pounds", setWeight)
         fs2020_variable_subscribe("ELECTRICAL MASTER BATTERY", "Bool", function(on)

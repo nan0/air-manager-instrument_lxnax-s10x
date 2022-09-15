@@ -4,7 +4,7 @@
 Polar = {}
 Polar.new = function(G)
     if not G.S_TOTAL_WEIGHT then
-        error('The total weight of the glider must be set in order to compute its polar data')
+        G.error.raise('The total weight of the glider must be set in order to compute its polar data')
     end
 
     local self = {}
@@ -34,7 +34,7 @@ Polar.new = function(G)
     function loadData()
         local data = static_data_load("default_polar_data.csv")
         if (data == nil) then
-            error("Error while reading the polar data. The data must be a valid json set in /ressources/default_polar_data.csv")
+            G.error.raises("Error while reading the polar data. The data must be a valid json set in /ressources/default_polar_data.csv")
         end
         polarData = data
     end
@@ -59,7 +59,7 @@ Polar.new = function(G)
                 return var_round(spf)
             end
         end
-        error('Speed to fly not found in the data provided')
+        G.error.raise('Speed to fly not found in the data provided')
     end
 
     --Sets the mcCready sert
