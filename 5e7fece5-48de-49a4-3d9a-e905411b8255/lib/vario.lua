@@ -3,9 +3,11 @@
 Vario = {}
 Vario.new = function()
     local self = {}
+    G = Globals.new()
+
     local availableModes = { WayPointMode }
-    local varioHistory = History.new(S_AVG_VARIO_TIME)
-    local nettoHistory = History.new(S_AVG_NETTO_TIME)
+    local varioHistory = History.new(G.S_AVG_VARIO_TIME)
+    local nettoHistory = History.new(G.S_AVG_NETTO_TIME)
     local splashScreen = nil
 
     self.modeNavigator = nil
@@ -24,7 +26,7 @@ Vario.new = function()
     end
 
     -- Sets the red diamond to the avg. netto
-    -- @param netto : the latest netto value
+    -- @param netto : the latest netto value in m/s
     function updateNetto(netto)
         local avgNetto = 0
         avgNetto = nettoHistory.addAndCompute(netto).getAvg()
@@ -34,7 +36,6 @@ Vario.new = function()
     -- Turn of the vario screen when master if off, turn on when on
     -- @param on : true if master is on, false otherwise
     function toggleVario(on)
-        S_MASTER_ON = on
         if (on == true) then
             splashScreen.startup()
         else
@@ -43,27 +44,18 @@ Vario.new = function()
         self.modeNavigator.currentItem.pageNavigator.currentItem.toggle(on)
     end
 
-    -- Sets the total weight globally
-    -- @param weight : the total plane weight in pounds
-    function setWeight(weight)
-        if not weight then
-            return
-        end
-        S_TOTAL_WEIGHT = poundsToKg(weight)
-        S_TOTAL_WEIGHT = var_round(S_TOTAL_WEIGHT)
-    end
 
     -- Inits the vario
     function init()
         -- Needles and background init
         self.yellowBar = YellowBar.new()
         img_add_fullscreen("ls100_bg.png")
-        txt_add("m/s", "font:" .. G.FONT .. "; color:" .. G.COLOR_INVERTED .. "; size:23; halign: right;", 310, 440, 30, 23)
+        txt_add("m/s", "font:" .. G.CONSTANTS.FONT .. "; color:" .. G.CONSTANTS.COLOR_INVERTED .. "; size:23; halign: right;", 310, 440, 30, 23)
         self.redDiamond = RedDiamond.new()
         self.needle = Needle.new()
 
         -- Navigator init
-        self.modeNavigator = Navigator.new(availableModes)
+        self.modeNavigator = Navigator.new(availableModes, G)
 
         -- Vario button declarations
         self.knobTop = RotaryButton.new("top", self.modeNavigator.currentItem.onTopKnobPressed, self.modeNavigator.currentItem.onTopKnobRotated)
@@ -72,13 +64,12 @@ Vario.new = function()
         -- Inits the splashScreen (visualy switches off the screens)
         splashScreen = SplashScreen.new()
 
-        toggleVario(S_MASTER_ON)
+        toggleVario(G.S_MASTER_ON)
 
         -- Subscriptions
         fs2020_variable_subscribe("L:TOTAL ENERGY", "FLOAT", updateVario)
         fs2020_variable_subscribe("L:NETTO", "FLOAT", updateNetto)
         fs2020_variable_subscribe("ELECTRICAL MASTER BATTERY", "Bool", toggleVario)
-        fs2020_variable_subscribe("TOTAL WEIGHT", "Pounds", setWeight)
     end
 
     init()

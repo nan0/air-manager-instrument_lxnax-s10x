@@ -1,7 +1,8 @@
 -- "Interface" to be extend in order to be able to use the navigator with
+-- @param G: the globals object
 -- @returns the Navigable interface like
 Navigable = {}
-Navigable.new = function()
+Navigable.new = function(G)
 
     local self = {}
 

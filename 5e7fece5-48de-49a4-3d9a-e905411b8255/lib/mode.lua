@@ -2,30 +2,30 @@
 -- @param pages: the page list to be navigated
 -- @returns the Mode object
 Mode = {}
-Mode.new = function(pages)
-    local self = Navigable.new()
+Mode.new = function(pages, G)
+    local self = Navigable.new(G)
     local quickAccessPageOpened = false
-    local quickAccessPage = QuickAccessPage.new()
+    local quickAccessPage = QuickAccessPage.new(G)
 
     self.previousPage = nil
-    self.pageNavigator = Navigator.new(pages)
+    self.pageNavigator = Navigator.new(pages, G)
 
     self.onTopKnobPressed = function()
-        if (not S_MASTER_ON) then
+        if (not G.S_MASTER_ON) then
             return
         end
         self.pageNavigator.currentItem.onTopKnobPressed(direction)
     end
 
     self.onTopKnobRotated = function(direction)
-        if (not S_MASTER_ON) then
+        if (not G.S_MASTER_ON) then
             return
         end
         self.pageNavigator.currentItem.onTopKnobRotated(direction)
     end
 
     self.onBottomKnobPressed = function()
-        if (not S_MASTER_ON) then
+        if (not G.S_MASTER_ON) then
             return
         end
         if (not quickAccessPageOpened) then
@@ -46,7 +46,7 @@ Mode.new = function(pages)
     end
 
     self.onBottomKnobRotated = function(direction)
-        if (not S_MASTER_ON) then
+        if (not G.S_MASTER_ON) then
             return
         end
         self.pageNavigator.currentItem.onBottomKnobRotated(direction)

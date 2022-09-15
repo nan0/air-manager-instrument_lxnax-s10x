@@ -1,11 +1,12 @@
 -- The numerical page
+-- @param G : the globals object
 -- @returns : the NumericsPage object
 NumericsPage = {}
-NumericsPage.new = function(enabled)
-    local self = Page.new(enabled)
-    local switchedOn = enabled
-    local varioHistory = History.new(S_AVG_VARIO_TIME)
-    local spf = SpeedToFlyIndicator.new()
+NumericsPage.new = function(G)
+    local self = Page.new(G)
+    local switchedOn = false
+    local varioHistory = History.new(G.S_AVG_VARIO_TIME)
+    local spfIndicator = SpeedToFlyIndicator.new()
 
     -- Add a Navbox at the requested position
     -- @param position: the navbox position between 1 and 4
@@ -66,19 +67,24 @@ NumericsPage.new = function(enabled)
     -- Writes the TAS in the 4th navbox
     -- @param tas : the tas in knots to be diplayed in km/h
     function displayAirspeed(tas)
-        tas = tas * 1852 / 1000 --converting to km/h
+        tas = knotsToKmh(tas)
         tas = var_cap(tas, 0, 9999)
         tas = string.format("%.0f", tas)
         self.navboxTAS.setValue(tas)
     end
 
     -- Computes and displays the speed to fly
-    -- @param tas : the tas in knots to be diplayed in km/h
-    function displaySpeedToFlyIndicator(tas)
+    -- @param netto : the current netto in m/s
+    -- @param airspeed : the tas in knots to be diplayed in km/h
+    function displaySpeedToFly(netto, airspeed)
         if not switchedOn then
             return
         end
-        spf.displayDiff(120 - tas)
+        airspeed = knotsToKmh(airspeed)
+        local spf = G.polar.getSpeedToFly(netto)
+        local diff = airspeed - spf
+        print('SPF : ' .. spf)
+        spfIndicator.displayDiff(diff)
     end
 
     -- @inheritDoc
@@ -89,7 +95,7 @@ NumericsPage.new = function(enabled)
         visible(self.navboxNetto.getNode(), switchedOn)
         visible(self.navboxAltitude.getNode(), switchedOn)
         visible(self.navboxTAS.getNode(), switchedOn)
-        spf.toggle(switchedOn)
+        spfIndicator.toggle(switchedOn)
     end
 
     -- Inits the page
@@ -108,7 +114,7 @@ NumericsPage.new = function(enabled)
         fs2020_variable_subscribe("L:TOTAL ENERGY", "FLOAT", dislayVario)
         fs2020_variable_subscribe("PLANE ALTITUDE", "Feet", displayAltitude)
         fs2020_variable_subscribe("AIRSPEED TRUE", "Knots", displayAirspeed)
-        fs2020_variable_subscribe("AIRSPEED TRUE", "Knots", displaySpeedToFlyIndicator)
+        fs2020_variable_subscribe("L:NETTO", "FLOAT", "AIRSPEED TRUE", "Knots", displaySpeedToFly)
     end
 
     init()

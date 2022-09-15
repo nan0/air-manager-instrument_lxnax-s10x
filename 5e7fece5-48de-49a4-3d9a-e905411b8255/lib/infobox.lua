@@ -7,7 +7,7 @@ Infobox = {}
 Infobox.new = function(x, y)
     local self = Navbox.new(y, '', 0, '')
     move(self.labelTxt, x)
-    txt_style(self.labelTxt, "font:" .. G.FONT .. ";color:" .. G.COLOR_SECONDARY .. ";size:20;halign:center;")
+    txt_style(self.labelTxt, "font:" .. G.CONSTANTS.FONT .. ";color:" .. G.CONSTANTS.COLOR_SECONDARY .. ";size:20;halign:center;")
     visible(self.valueTxt, false)
     visible(self.unitTxt, false)
 

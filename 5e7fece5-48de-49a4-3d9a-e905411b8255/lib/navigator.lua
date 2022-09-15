@@ -1,7 +1,8 @@
 -- Provides tools to navigate between generic items
 -- @param navigationItems : the fixed item list to navigate into
+-- @param G : the globals object
 Navigator = {}
-Navigator.new = function(navigationItems)
+Navigator.new = function(navigationItems, G)
     if (not navigationItems or #navigationItems == 0) then
         error("The navigator must be instanced with at least one item")
     end
@@ -17,7 +18,7 @@ Navigator.new = function(navigationItems)
         else
             currentIndex = 1
         end
-        self.currentItem = navigationItems[currentIndex].new()
+        self.currentItem = navigationItems[currentIndex].new(G)
     end
 
     -- Displays the previous navigator item, or the first item if not any previous one
@@ -27,7 +28,7 @@ Navigator.new = function(navigationItems)
         else
             currentIndex = 1
         end
-        self.currentItem = navigationItems[currentIndex].new()
+        self.currentItem = navigationItems[currentIndex].new(G)
     end
 
     -- Init the navigator by displaying the 1st item provided
