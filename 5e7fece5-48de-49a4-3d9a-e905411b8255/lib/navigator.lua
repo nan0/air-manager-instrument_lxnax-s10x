@@ -4,7 +4,7 @@
 Navigator = {}
 Navigator.new = function(navigationItems, G)
     if (not navigationItems or #navigationItems == 0) then
-        G.error.raise("The navigator must be instanced with at least one item")
+        Error.new("The navigator must be instanced with at least one item")
     end
 
     local self = {}

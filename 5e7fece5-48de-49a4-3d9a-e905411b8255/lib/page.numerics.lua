@@ -15,7 +15,7 @@ NumericsPage.new = function(G)
     -- @param unit: the value unit
     function addNavbox(position, label, value, unit)
         if (position < 1 or position > 4) then
-            G.error.raise("The position must be between 1 and 4")
+            Error.new("The navbox position must be between 1 and 4")
         end
 
         local y = 30 + position * 75
