@@ -28,9 +28,9 @@ Globals.new = function()
     self.S_MASTER_ON = false
 
     --Dev (To be commented)
---[[    self.S_INIT_TIMEOUT = 0
+    self.S_INIT_TIMEOUT = 0
     self.S_MASTER_ON = true
-    self.S_TOTAL_WEIGHT = 450]]
+    self.S_TOTAL_WEIGHT = 450
 
     self.polar = nil
 

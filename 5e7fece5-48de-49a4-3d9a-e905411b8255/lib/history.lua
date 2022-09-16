@@ -42,18 +42,18 @@ History.new = function(period)
         local sum = 0
         local tuple = { elem, os.time() }
         table.insert(historyTable, tuple)
-        min = 0
-        max = 0
+        min = nil
+        max = nil
         for index, valueTuple in pairs(historyTable) do
             local value = valueTuple[1]
             arraySize = arraySize + 1
             sum = sum + value
 
-            if value < min then
+            if not min or value < min then
                 min = value
             end
 
-            if value > max then
+            if not max or value > max then
                 max = value
             end
         end

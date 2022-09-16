@@ -17,6 +17,9 @@ _A implementation of the S10x glider vario suitable for the Got Friends Discus 2
 - Blue arrow : MacCready setting
 - Switching off the screen when master is off
 - Adding a splashscreen when booting the vario
+- Adding two rotary buttons and menu navigation
+- _Fix : Making the yellow bar be able to go under 0 when the max value is negative and upper 0 when the min value is positive_
+
 
 ### 1.1.0 _Released [[Video review here]](https://youtu.be/dhCVyx4by5A)_
 - Yellow bar : min/ max vario 
