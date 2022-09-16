@@ -51,11 +51,13 @@ Vario.new = function()
         self.yellowBar = YellowBar.new()
         img_add_fullscreen("ls100_bg.png")
         txt_add("m/s", "font:" .. G.CONSTANTS.FONT .. "; color:" .. G.CONSTANTS.COLOR_INVERTED .. "; size:23; halign: right;", 310, 440, 30, 23)
-        self.redDiamond = RedDiamond.new()
-        self.needle = Needle.new()
 
         -- Navigator init
         self.modeNavigator = Navigator.new(availableModes, G)
+
+        -- Needles
+        self.redDiamond = RedDiamond.new()
+        self.needle = Needle.new()
 
         -- Vario button declarations
         self.knobTop = RotaryButton.new("top", self.modeNavigator.currentItem.onTopKnobPressed, self.modeNavigator.currentItem.onTopKnobRotated)

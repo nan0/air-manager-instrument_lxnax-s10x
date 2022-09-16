@@ -18,6 +18,7 @@ _A implementation of the S10x glider vario suitable for the Got Friends Discus 2
 - Switching off the screen when master is off
 - Adding a splashscreen when booting the vario
 - Adding two rotary buttons and menu navigation
+- Displaying wing speed in km/h
 - _Fix : Making the yellow bar be able to go under 0 when the max value is negative and upper 0 when the min value is positive_
 
 
