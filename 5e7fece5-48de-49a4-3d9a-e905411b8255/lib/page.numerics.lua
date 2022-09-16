@@ -33,7 +33,7 @@ NumericsPage.new = function(G)
         local direction = windDirection - planeDirection
         self.windbox.setRelativeDirection(direction)
 
-        windVelocity = windVelocity / 1.94 -- Converting knots to m/s
+        windVelocity = knotsToKmh(windVelocity)
         windVelocity = var_format(windVelocity, 0)
         self.windbox.setVelocity(windVelocity)
     end
